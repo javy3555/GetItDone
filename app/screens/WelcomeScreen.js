@@ -7,12 +7,31 @@ import {
   NativeBaseProvider,
   Heading,
   Box,
+  extendTheme,
 } from "native-base";
 import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { firebase } from "../firebase/config";
 import Toast from "react-native-easy-toast";
 
 function WelcomeScreen({ navigation }) {
+  const theme = extendTheme({
+    colors: {
+      // Add new color
+      primary: {
+        50: "#e3e8ff",
+        100: "#b2baff",
+        200: "#7f8cff",
+        300: "#4d5eff",
+        400: "#1d30fe",
+        500: "#4d5eff",
+        600: "#0011b3",
+        700: "#000c81",
+        800: "#000650",
+        900: "#000120",
+      },
+      // Redefinig only one shade, rest of the color will remain same.
+    },
+  });
   const [show, setShow] = React.useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -38,7 +57,7 @@ function WelcomeScreen({ navigation }) {
   };
 
   return (
-    <NativeBaseProvider afeArea>
+    <NativeBaseProvider safeArea theme={theme}>
       <View style={styles.background}>
         <View style={styles.logoContainer}>
           <Text style={styles.title}>GetItDone</Text>
@@ -56,20 +75,20 @@ function WelcomeScreen({ navigation }) {
                 size="md"
                 m={2}
                 _light={{
-                  color: "#5061FF",
+                  color: "primary.300",
                 }}
                 _dark={{
                   color: "gray.300",
                 }}
               />
             }
-            borderColor="#5061FF"
+            borderColor="primary.300"
             onChangeText={(text) => setEmail(text)}
             value={email}
             variant="rounded"
             placeholder="Email"
             _light={{
-              placeholderTextColor: "#5061FF",
+              placeholderTextColor: "primary.300",
             }}
             _dark={{
               placeholderTextColor: "blueGray.50",
@@ -85,7 +104,7 @@ function WelcomeScreen({ navigation }) {
                 size="md"
                 m={2}
                 _light={{
-                  color: "#5061FF",
+                  color: "primary.300",
                 }}
                 _dark={{
                   color: "gray.300",
@@ -104,7 +123,7 @@ function WelcomeScreen({ navigation }) {
                 {show ? "Hide" : "Show"}
               </Button>
             }
-            borderColor="#5061FF"
+            borderColor="primary.300"
             onChangeText={(text) => setPassword(text)}
             value={password}
             placeholder="Password"
@@ -180,7 +199,6 @@ const styles = StyleSheet.create({
     height: 52,
     width: "84%",
     bottom: 180,
-    backgroundColor: "#5061FF",
     borderRadius: 25,
   },
   registerButton: {

@@ -16,6 +16,7 @@ import {
   NativeBaseProvider,
   Modal,
   extendTheme,
+  Actionsheet
 } from "native-base";
 import { FontAwesome5, AntDesign } from "@expo/vector-icons";
 
@@ -44,7 +45,7 @@ export default function () {
     { title: "repeat", isCompleted: false },
   ];
   const [list, setList] = React.useState(instState);
-  const [inputValue, setInputValue] = React.useState("");
+  const [inputValue, setInputValue] = useState("");
   const [searchValue, setSearchValue] = React.useState("");
   const [showModal, setShowModal] = useState(false);
 
@@ -151,41 +152,37 @@ export default function () {
             }}
           />
         </Box>
-
-        <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
-          <Modal.Content maxWidth="400px">
-            <Modal.CloseButton />
-            <Modal.Header>New Task</Modal.Header>
-            <Modal.Body>
-              <Input
-                top={15}
-                variant="underlined"
-                placeholder="Add a Task"
-                _light={{
-                  placeholderTextColor: "primary.300",
-                }}
-                _dark={{
-                  placeholderTextColor: "blueGray.50",
-                }}
-                onChangeText={(v) => setInputValue(v)}
-                value={inputValue}
-              />
-            </Modal.Body>
-            <Modal.Footer>
-              <Button.Group variant="ghost" space={2}>
-                <Button
-                  onPress={() => {
-                    setShowModal(false);
-                    addItem(inputValue);
-                    setInputValue("");
-                  }}
-                >
-                  ADD
-                </Button>
-              </Button.Group>
-            </Modal.Footer>
-          </Modal.Content>
-        </Modal>
+            
+        <Actionsheet isOpen={showModal} onClose={() => setShowModal(false)}>
+          <Actionsheet.Content style={{ height: 300}}>
+            <Text style={{ fontSize: 25, fontWeight: 'bold', right: 115  }}>New Task</Text>
+            <Actionsheet.Item> <Input
+              style={{ width: 350}}
+              variant="underlined"
+              placeholder="Add a Task"
+              _light={{
+                placeholderTextColor: "primary.300",
+              }}
+              _dark={{
+                placeholderTextColor: "blueGray.50",
+              }}
+              onChangeText={(text) => setInputValue(text)}
+              value={inputValue}
+          />  </Actionsheet.Item>
+            <Actionsheet.Item>
+            <Button
+            style={{ left: 300}}
+            onPress={() => {
+              setShowModal(false);
+              addItem(inputValue);
+              setInputValue("");
+            }}
+          >
+            ADD
+          </Button>
+          </Actionsheet.Item>
+        </Actionsheet.Content>
+      </Actionsheet>
       </Center>
     </NativeBaseProvider>
   );

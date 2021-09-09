@@ -15,6 +15,7 @@ import {
   Divider,
 } from "react-native-paper";
 import todoScreen from "./todoScreen";
+import profileScreen from "./profileScreen";
 import { firebase } from "../firebase/config";
 import React from "react";
 import { Ionicons } from "@expo/vector-icons";
@@ -77,36 +78,6 @@ function DoLogout(props) {
       </View>
       <DrawerItemList {...props} />
       <DrawerItem
-        label="Profile"
-        activeTintColor="#5061FF"
-        inactiveTintColor="#5061FF"
-        icon={({ focused, size }) => (
-          <Ionicons
-            name="person-outline"
-            size={30}
-            color={focused ? "#5061FF" : "#5061FF"}
-          />
-        )}
-        onPress={() => {
-          props.navigation.navigate("profileScreen");
-        }}
-      />
-      <DrawerItem
-        label="Settings"
-        activeTintColor="#5061FF"
-        inactiveTintColor="#5061FF"
-        icon={({ focused, size }) => (
-          <Ionicons
-            name="settings-outline"
-            size={30}
-            color={focused ? "#5061FF" : "#5061FF"}
-          />
-        )}
-        onPress={() => {
-          props.navigation.navigate("settingsScreen");
-        }}
-      />
-      <DrawerItem
         top={360}
         label="Logout"
         activeTintColor="#5061FF"
@@ -146,9 +117,42 @@ function homeScreen({ navigation }) {
         options={{
           headerShown: false,
           drawerActiveTintColor: "#5061FF",
+          drawerInactiveTintColor: "#5061FF",
           drawerIcon: ({ focused, size }) => (
             <Ionicons
               name="home-outline"
+              size={30}
+              color={focused ? "#5061FF" : "#5061FF"}
+            />
+          ),
+        }}
+      />
+      <Drawer.Screen
+        name="Profile"
+        component={profileScreen}
+        options={{
+          headerShown: false,
+          drawerActiveTintColor: "#5061FF",
+          drawerInactiveTintColor: "#5061FF",
+          drawerIcon: ({ focused, size }) => (
+            <Ionicons
+              name="person-outline"
+              size={30}
+              color={focused ? "#5061FF" : "#5061FF"}
+            />
+          ),
+        }}
+      />
+       <Drawer.Screen
+        name="Settings"
+        component={profileScreen}
+        options={{
+          headerShown: false,
+          drawerActiveTintColor: "#5061FF",
+          drawerInactiveTintColor: "#5061FF",
+          drawerIcon: ({ focused, size }) => (
+            <Ionicons
+              name="settings-outline"
               size={30}
               color={focused ? "#5061FF" : "#5061FF"}
             />
