@@ -1,5 +1,5 @@
-import React from "react";
-import { useState } from "react";
+import React, { useCallback } from "react";
+import { useState, useEffect } from "react";
 import {
   Input,
   Box,
@@ -14,13 +14,31 @@ import {
   Icon,
   Center,
   NativeBaseProvider,
-  Modal,
   extendTheme,
-  Actionsheet
+  Actionsheet,
+  PresenceTransition,
+  Spinner,
+  Pressable,
 } from "native-base";
-import { FontAwesome5, AntDesign } from "@expo/vector-icons";
+import moment from "moment";
+import {
+  FontAwesome5,
+  AntDesign,
+  Ionicons,
+  MaterialIcons,
+} from "@expo/vector-icons";
+import {
+  Platform,
+  KeyboardAvoidingView,
+  View,
+  Image,
+  TouchableOpacity,
+} from "react-native";
+import { SwipeListView } from "react-native-swipe-list-view";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import { firebase } from "../firebase/config";
 
-export default function () {
+export default function ({ navigation }) {
   const theme = extendTheme({
     colors: {
       // Add new color
@@ -36,33 +54,92 @@ export default function () {
         800: "#000650",
         900: "#000120",
       },
+      orange: {
+        700: "#fed7aa",
+      },
+      green: {
+        700: "#bbf7d0",
+      },
+      red: {
+        700: "#fecaca",
+      },
       // Redefinig only one shade, rest of the color will remain same.
     },
   });
-  const instState = [
-    { title: "code", isCompleted: true },
-    { title: "sleep", isCompleted: false },
-    { title: "repeat", isCompleted: false },
-  ];
-  const [list, setList] = React.useState(instState);
-  const [inputValue, setInputValue] = useState("");
+
+  const [list, setList] = useState([]);
   const [searchValue, setSearchValue] = React.useState("");
   const [showModal, setShowModal] = useState(false);
+  const [date2, setDate] = useState(new Date(Date.now()));
+  const [show, setShow] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [isCompleted, setIscompleted] = useState(false);
+  const [taskName, setTaskName] = React.useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [level, setLevel] = useState("");
+  const [isMounted, setIsMounted] = useState(true);
 
-  const addItem = (title: string) => {
-    setList([
-      ...list,
-      {
-        title: title,
-        isCompleted: false,
-      },
-    ]);
+  const userData = [];
+  var user = firebase.auth().currentUser;
+  var uid;
+
+  if (user != null) {
+    uid = user.uid;
+  }
+
+  const fetchList = async () => {
+    const response = firebase.database().ref("users/" + uid + "/tasks");
+    await response.once("value", function (snapshot) {
+      snapshot.forEach(function (childSnapshot) {
+        userData.push({
+          ...childSnapshot.val(),
+          key: childSnapshot.key,
+        });
+      });
+    });
+    setList(userData);
+    setIsLoading(false);
   };
-  const handleDelete = (index: number) => {
-    const temp = list.filter((_, itemI) => itemI !== index);
-    setList(temp);
+
+  useEffect(() => {
+    fetchList();
+  }, [isMounted]); // removed lists from subscription []
+
+  /**
+   *
+   * @param {React.FormEvent<HTMLFormElement>} e
+   */
+
+  const addItem = (e) => {
+    setIsMounted(!isMounted);
+
+    var task = {
+      task: taskName,
+      level: level,
+      isCompleted: isCompleted,
+      date: moment(date2).format(
+        "DD.MM.YYYY, h:mm a                                   "
+      ),
+      time: moment(date2).format("h:mm A"),
+      userId: uid,
+    };
+
+    firebase
+      .database()
+      .ref("/users/" + uid + "/tasks")
+      .push(task);
+
+    setDate(new Date(Date.now()));
+    setTaskName("");
+    setLevel("");
   };
-  const handleStatusChange = (index: number) => {
+
+  const handleStatusChange = (index, item) => {
+    var updt = { isCompleted: !item.isCompleted };
+    firebase
+      .database()
+      .ref("/users/" + uid + "/tasks/" + item.key)
+      .update(updt);
     const temp = list.map((item, itemI) =>
       itemI !== index
         ? item
@@ -77,113 +154,388 @@ export default function () {
   const handleModal = () => {
     setShowModal(true);
   };
+
+  const onChange = (event, selectedDate) => {
+    setIsMounted(!isMounted);
+    const currentDate = selectedDate || date;
+    setShow(Platform.OS === "ios");
+    setDate(currentDate);
+  };
+
+  const showMode = (flag) => {
+    setIsOpen(flag);
+    setShow(true);
+  };
+
+  const handleLevel = (level) => {
+    setLevel(level);
+  };
+
+  const handleLevelColor = (level) => {
+    if (level == "easy") return "#bbf7d0";
+    else if (level == "medium") return "#fed7aa";
+    else if (level == "hard") return "#fecaca";
+    else return "white";
+  };
+
+  /// Swipe functions ///
+
+  const closeRow = (rowMap, rowKey) => {
+    if (rowMap[rowKey]) {
+      rowMap[rowKey].closeRow();
+    }
+  };
+
+  const deleteRow = (rowMap, rowKey) => {
+    firebase
+      .database()
+      .ref("/users/" + uid + "/tasks/" + rowKey)
+      .remove();
+
+    closeRow(rowMap, rowKey);
+    const newData = [...list];
+    const prevIndex = list.findIndex((item) => item.key === rowKey);
+    newData.splice(prevIndex, 1);
+    setList(newData);
+  };
+
+  const onRowDidOpen = (rowKey) => {
+    console.log("This row opened", rowKey);
+  };
+
+  const renderItem = ({ item, index }) => (
+    <Box>
+      <Pressable
+        alignItems="center"
+        justifyContent="center"
+        height={50}
+        marginTop={2}
+        style={{
+          backgroundColor: handleLevelColor(item.level),
+          borderRadius: 10,
+        }}
+      >
+        <HStack
+          h={9}
+          w="100%"
+          justifyContent="space-between"
+          alignItems="center"
+          key={item.task}
+        >
+          <Checkbox
+            size="md"
+            color="primary.300"
+            left={1}
+            isChecked={item.isCompleted}
+            onChange={() => handleStatusChange(index, item)}
+            value={item.task}
+          >
+            <Text fontSize="2xl" mx={2} strikeThrough={item.isCompleted}>
+              {item.task}
+            </Text>
+          </Checkbox>
+          <Text mr={2}>{item.time}</Text>
+        </HStack>
+      </Pressable>
+    </Box>
+  );
+
+  const renderHiddenItem = (data, rowMap) => (
+    <HStack
+      flex={1}
+      pl={2}
+      marginTop={2}
+      style={{
+        backgroundColor: handleLevelColor(data.item.level),
+        borderRadius: 10,
+      }}
+    >
+      <Pressable
+        px={4}
+        ml="auto"
+        bg="dark.500"
+        justifyContent="center"
+        onPress={() => closeRow(rowMap, data.item.key)}
+        _pressed={{
+          opacity: 0.5,
+        }}
+      >
+        <Icon as={<Ionicons name="close" />} color="white" />
+      </Pressable>
+      <Pressable
+        px={4}
+        bg="red.500"
+        justifyContent="center"
+        style={{
+          borderBottomRightRadius: 10,
+          borderTopRightRadius: 10,
+        }}
+        onPress={() => deleteRow(rowMap, data.item.key)}
+        _pressed={{
+          opacity: 0.5,
+        }}
+      >
+        <Icon as={<MaterialIcons name="delete" />} color="white" />
+      </Pressable>
+    </HStack>
+  );
+
   return (
-    <NativeBaseProvider theme={theme}>
-      <Center flex={1}>
-        <VStack space={4} flex={1} w="90%" mt={8}>
-          <Heading color="#4d5eff" size="2xl">
-            Todo List
-          </Heading>
-          <Input
-            variant="filled"
-            InputRightElement={
-              <IconButton
-                icon={
-                  <Icon as={FontAwesome5} color="grey" name="search" size={4} />
-                }
-                color="primary.300"
-                ml={1}
-                onPress={() => {
-                  addItem(searchValue);
-                  setSearchValue("");
-                }}
-                mr={1}
-              />
-            }
-            onChangeText={(v) => setSearchValue(v)}
-            value={searchValue}
-            placeholder="Search"
-          />
-          <VStack>
-            {list.map((item, itemI) => (
-              <HStack
-                h={9}
-                w="100%"
-                justifyContent="space-between"
-                alignItems="center"
-                key={item.title + itemI.toString()}
-              >
-                <Checkbox
-                  size="md"
-                  color="primary.300"
-                  isChecked={item.isCompleted}
-                  onChange={() => handleStatusChange(itemI)}
-                  value={item.title}
-                >
-                  <Text fontSize="2xl" mx={2} strikeThrough={item.isCompleted}>
-                    {item.title}
-                  </Text>
-                </Checkbox>
-                <IconButton
-                  color="primary.300"
-                  icon={
-                    <Icon
-                      as={FontAwesome5}
-                      color="gray.600"
-                      name="trash"
-                      size={5}
+    <>
+      {isLoading && (
+        <NativeBaseProvider theme={theme}>
+          <Center flex={1}>
+            <HStack space={2}>
+              <Heading color="primary.300"></Heading>
+              <Spinner accessibilityLabel="Loading posts" />
+            </HStack>
+          </Center>
+        </NativeBaseProvider>
+      )}
+      {!isLoading && (
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : null}
+          style={{ flex: 1 }}
+        >
+          <NativeBaseProvider theme={theme} safeArea>
+            <Center flex={1}>
+              <VStack space={4} flex={1} w="90%" mt={8}>
+                <Heading color="#4d5eff" size="2xl">
+                  All tasks
+                </Heading>
+                <Input
+                  variant="filled"
+                  InputRightElement={
+                    <IconButton
+                      icon={
+                        <Icon
+                          as={FontAwesome5}
+                          color="grey"
+                          name="search"
+                          size={4}
+                        />
+                      }
+                      color="primary.300"
+                      ml={1}
+                      onPress={() => {
+                        addItem(searchValue);
+                        setSearchValue("");
+                      }}
+                      mr={1}
                     />
                   }
-                  onPress={() => handleDelete(itemI)}
+                  onChangeText={(v) => setSearchValue(v)}
+                  value={searchValue}
+                  placeholder="Search"
                 />
-              </HStack>
-            ))}
-          </VStack>
-        </VStack>
-        <Box position="relative" h={200} w="100%">
-          <Fab
-            position="absolute"
-            right={5}
-            bottom={30}
-            bg="primary.300"
-            icon={<Icon color="white" as={<AntDesign name="plus" />} />}
-            onPress={() => {
-              handleModal();
-            }}
-          />
-        </Box>
-            
-        <Actionsheet isOpen={showModal} onClose={() => setShowModal(false)}>
-          <Actionsheet.Content style={{ height: 300}}>
-            <Text style={{ fontSize: 25, fontWeight: 'bold', right: 115  }}>New Task</Text>
-            <Actionsheet.Item> <Input
-              style={{ width: 350}}
-              variant="underlined"
-              placeholder="Add a Task"
-              _light={{
-                placeholderTextColor: "primary.300",
-              }}
-              _dark={{
-                placeholderTextColor: "blueGray.50",
-              }}
-              onChangeText={(text) => setInputValue(text)}
-              value={inputValue}
-          />  </Actionsheet.Item>
-            <Actionsheet.Item>
-            <Button
-            style={{ left: 300}}
-            onPress={() => {
-              setShowModal(false);
-              addItem(inputValue);
-              setInputValue("");
-            }}
-          >
-            ADD
-          </Button>
-          </Actionsheet.Item>
-        </Actionsheet.Content>
-      </Actionsheet>
-      </Center>
-    </NativeBaseProvider>
+
+                <SwipeListView
+                  data={list}
+                  renderItem={renderItem}
+                  renderHiddenItem={renderHiddenItem}
+                  rightOpenValue={-130}
+                  previewRowKey={"0"}
+                  previewOpenValue={-40}
+                  previewOpenDelay={3000}
+                  onRowDidOpen={onRowDidOpen}
+                />
+              </VStack>
+              <Box position="relative" h={200} w="100%">
+                <Fab
+                  position="absolute"
+                  right={5}
+                  bottom={30}
+                  bg="primary.300"
+                  icon={<Icon color="white" as={<AntDesign name="plus" />} />}
+                  onPress={() => {
+                    handleModal();
+                  }}
+                />
+              </Box>
+              <Actionsheet
+                isOpen={showModal}
+                onClose={() => setShowModal(false)}
+              >
+                <Actionsheet.Content style={{ height: 460 }}>
+                  <Text
+                    style={{ fontSize: 25, fontWeight: "bold", right: 129 }}
+                  >
+                    New Task
+                  </Text>{" "}
+                  <Input
+                    w="100%"
+                    mx={3}
+                    placeholder="Add a task..."
+                    placeholderTextColor="primary.300"
+                    variant="underlined"
+                    autoCorrect={false}
+                    onChangeText={(v) => setTaskName(v)}
+                    value={taskName}
+                  />{" "}
+                  <Text
+                    style={{
+                      right: 130,
+                      fontSize: 18,
+                      bottom: 10,
+                      fontWeight: "bold",
+                    }}
+                  >
+                    Dificulty level
+                  </Text>{" "}
+                  <View style={{ flexDirection: "row", bottom: 20 }}>
+                    <TouchableOpacity
+                      style={{
+                        right: 10,
+                        width: "30%",
+                        height: 100,
+                        borderWidth: 1.5,
+                        borderColor: "#86efac",
+                        backgroundColor:
+                          level == "easy" ? "#bbf7d0" : "transparent",
+                      }}
+                      onPress={() => handleLevel("easy")}
+                    >
+                      <Image
+                        style={{ height: 100, width: 122, right: 3 }}
+                        source={require("../assets/easy-icon.png")}
+                      ></Image>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={{
+                        height: 100,
+                        width: "30%",
+                        borderWidth: 1.5,
+                        borderColor: "#fdba74",
+                        backgroundColor:
+                          level == "medium" ? "#fed7aa" : "transparent",
+                      }}
+                      onPress={() => handleLevel("medium")}
+                    >
+                      <Image
+                        style={{ height: 100, width: 122, right: 3 }}
+                        source={require("../assets/medium-icon.png")}
+                      ></Image>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={{
+                        left: 10,
+                        width: "30%",
+                        height: 100,
+                        borderWidth: 1.5,
+                        borderColor: "#fca5a5",
+                        backgroundColor:
+                          level == "hard" ? "#fecaca" : "transparent",
+                      }}
+                      onPress={() => handleLevel("hard")}
+                    >
+                      <Image
+                        style={{ height: 100, width: 122, right: 3 }}
+                        source={require("../assets/hard-icon.png")}
+                      ></Image>
+                    </TouchableOpacity>
+                  </View>
+                  <Button
+                    style={{ width: "90%", top: 100 }}
+                    onPress={() => {
+                      setShowModal(false);
+                      addItem();
+                    }}
+                  >
+                    ADD
+                  </Button>
+                  <Text
+                    style={{
+                      right: 129,
+                      fontSize: 18,
+                      bottom: 45,
+                      fontWeight: "bold",
+                    }}
+                  >
+                    Date and time
+                  </Text>{" "}
+                  <Button
+                    bg="transparent"
+                    style={{
+                      width: "90%",
+                      bottom: 50,
+                      borderWidth: 1.5,
+                      borderColor: "#4d5eff",
+                    }}
+                    onPress={() => {
+                      showMode(true);
+                    }}
+                  >
+                    <Text
+                      style={{
+                        color: "#4d5eff",
+                        right: 4,
+                      }}
+                    >
+                      {moment(date2).format(
+                        "DD.MM.YYYY, h:mm A                                   "
+                      )}
+                      <Icon
+                        as={FontAwesome5}
+                        color="primary.300"
+                        name="calendar"
+                        size={5}
+                      />
+                    </Text>
+                  </Button>
+                  {show && (
+                    <PresenceTransition
+                      visible={isOpen}
+                      initial={{
+                        opacity: 0,
+                        scale: 0,
+                      }}
+                      animate={{
+                        opacity: 1,
+                        scale: 1,
+                        transition: {
+                          duration: 250,
+                        },
+                      }}
+                      style={{
+                        width: "100%",
+                        height: 300,
+                        bottom: 250,
+                        backgroundColor: "white",
+                        borderRadius: 10,
+                        shadowColor: "#000000",
+                        shadowOpacity: 0.3,
+                        elevation: 6,
+                        shadowRadius: 5,
+                        shadowOffset: { width: 0.2, height: 0.2 },
+                      }}
+                    >
+                      <DateTimePicker
+                        testID="dateTimePicker"
+                        value={date2}
+                        mode={"datetime"}
+                        is24Hour={true}
+                        display="spinner"
+                        onChange={onChange}
+                      />
+                      <Button
+                        style={{
+                          width: "90%",
+                          alignSelf: "center",
+                        }}
+                        onPress={() => {
+                          showMode(false);
+                        }}
+                      >
+                        Done
+                      </Button>
+                    </PresenceTransition>
+                  )}
+                </Actionsheet.Content>
+              </Actionsheet>
+            </Center>
+          </NativeBaseProvider>
+        </KeyboardAvoidingView>
+      )}
+    </>
   );
 }

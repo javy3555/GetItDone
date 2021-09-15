@@ -27,9 +27,8 @@ function DoLogout(props) {
   var username;
 
   var userId = firebase.auth().currentUser.uid;
-  const ref = firebase.database().ref("users");
+  const ref = firebase.database().ref("users/" + userId + "/credentials/");
   ref
-    .child(userId)
     .child("fullName")
     .on("value", (snapshot) => {
       username = snapshot.val();
@@ -60,7 +59,7 @@ function DoLogout(props) {
       <View style={styles.userInfoSection}>
         <View style={{ flexDirection: "row", marginTop: 15, marginBottom: 20 }}>
           <Avatar.Image
-            source={require("../assets/avatars/Dog_1.png")}
+            source={require("../assets/avatars/Dog_4.png")}
             size={80}
           />
           <View
@@ -75,24 +74,25 @@ function DoLogout(props) {
           </View>
         </View>
         <Divider />
+
+        <DrawerItemList {...props} />
+        <DrawerItem
+          marginTop={360}
+          label="Logout"
+          activeTintColor="#5061FF"
+          inactiveTintColor="#5061FF"
+          icon={({ focused, size }) => (
+            <Ionicons
+              name="log-out-outline"
+              size={30}
+              color={focused ? "#5061FF" : "#5061FF"}
+            />
+          )}
+          onPress={() => {
+            doLogout();
+          }}
+        />
       </View>
-      <DrawerItemList {...props} />
-      <DrawerItem
-        top={360}
-        label="Logout"
-        activeTintColor="#5061FF"
-        inactiveTintColor="#5061FF"
-        icon={({ focused, size }) => (
-          <Ionicons
-            name="log-out-outline"
-            size={30}
-            color={focused ? "#5061FF" : "#5061FF"}
-          />
-        )}
-        onPress={() => {
-          doLogout();
-        }}
-      />
     </DrawerContentScrollView>
   );
 }
@@ -143,7 +143,7 @@ function homeScreen({ navigation }) {
           ),
         }}
       />
-       <Drawer.Screen
+      <Drawer.Screen
         name="Settings"
         component={profileScreen}
         options={{

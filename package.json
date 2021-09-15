@@ -8,6 +8,9 @@
     "eject": "expo eject"
   },
   "dependencies": {
+    "@react-native-community/datetimepicker": "3.5.2",
+    "@react-native-community/masked-view": "0.1.10",
+    "@react-native-masked-view/masked-view": "0.2.4",
     "@react-navigation/drawer": "^6.1.4",
     "@react-navigation/native": "^6.0.2",
     "@react-navigation/native-stack": "^6.1.0",
@@ -17,26 +20,29 @@
     "expo-app-loading": "^1.1.2",
     "expo-status-bar": "~1.0.4",
     "firebase": "8.2.3",
+    "moment": "^2.29.1",
     "native-base": "^3.1.0",
     "prop-types": "^15.7.2",
     "react": "16.13.1",
     "react-dom": "16.13.1",
     "react-native": "https://github.com/expo/react-native/archive/sdk-42.0.0.tar.gz",
     "react-native-easy-toast": "^2.0.0",
-    "react-native-gesture-handler": "^1.10.3",
+    "react-native-gesture-handler": "~1.10.2",
     "react-native-paper": "^4.9.2",
-    "react-native-reanimated": "^2.2.0",
+    "react-native-reanimated": "~2.2.0",
     "react-native-safe-area-context": "3.2.0",
     "react-native-screens": "~3.4.0",
     "react-native-svg": "12.1.1",
     "react-native-swipe-list-view": "*",
     "react-native-web": "^0.17.1",
+    "react-navigation-stack": "^2.10.4",
     "save": "^2.4.0",
     "styled-components": "^5.3.1",
-    "styled-system": "^5.1.5"
+    "styled-system": "^5.1.5",
+    "undefined": "react-native-masked-view/masked-view"
   },
   "devDependencies": {
-    "@babel/core": "^7.9.0"
+    "@babel/core": "~7.9.0"
   },
   "private": true
 }

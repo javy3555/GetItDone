@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { Image, Text, StyleSheet, View } from "react-native";
+import {
+  Image,
+  Text,
+  StyleSheet,
+  View,
+  Platform,
+  KeyboardAvoidingView,
+} from "react-native";
 import {
   Icon,
   Button,
@@ -8,6 +15,8 @@ import {
   Heading,
   Box,
   extendTheme,
+  Center,
+  VStack,
 } from "native-base";
 import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { firebase } from "../firebase/config";
@@ -57,95 +66,101 @@ function WelcomeScreen({ navigation }) {
   };
 
   return (
-    <NativeBaseProvider safeArea theme={theme}>
-      <View style={styles.background}>
-        <View style={styles.logoContainer}>
-          <Text style={styles.title}>GetItDone</Text>
-          <Image
-            style={styles.logo}
-            source={require("../assets/checkmark.png")}
-          ></Image>
-          <Text style={styles.header2}>Log in</Text>
-        </View>
-        <View style={styles.inputText1}>
-          <Input
-            InputLeftElement={
-              <Icon
-                as={<MaterialIcons name="email" />}
-                size="md"
-                m={2}
-                _light={{
-                  color: "primary.300",
-                }}
-                _dark={{
-                  color: "gray.300",
-                }}
-              />
-            }
-            borderColor="primary.300"
-            onChangeText={(text) => setEmail(text)}
-            value={email}
-            variant="rounded"
-            placeholder="Email"
-            _light={{
-              placeholderTextColor: "primary.300",
-            }}
-            _dark={{
-              placeholderTextColor: "blueGray.50",
-            }}
-          />
-        </View>
-        <View style={styles.inputText1}>
-          <Input
-            type={show ? "text" : "password"}
-            InputLeftElement={
-              <Icon
-                as={<MaterialIcons name="lock" />}
-                size="md"
-                m={2}
-                _light={{
-                  color: "primary.300",
-                }}
-                _dark={{
-                  color: "gray.300",
-                }}
-              />
-            }
-            InputRightElement={
-              <Button
-                size="sm"
-                bg="#5061FF"
-                mr={2}
-                roundedLeft="md"
-                roundedRight="md"
-                onPress={handleClick}
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : null}
+      style={{ flex: 1 }}
+    >
+      <NativeBaseProvider safeArea theme={theme}>
+        <Center flex={1}>
+          <Box p={2} mt={5} w="90%" mx="auto">
+            <VStack space={3} alignItems="center">
+              <View style={styles.logoContainer}>
+                <Text style={styles.title}>GetItDone</Text>
+                <Image
+                  style={styles.logo}
+                  source={require("../assets/checkmark.png")}
+                ></Image>
+                <Text style={styles.header2}>Log in</Text>
+              </View>
+              <View style={styles.inputText1}>
+                <Input
+                  InputLeftElement={
+                    <Icon
+                      as={<MaterialIcons name="email" />}
+                      size="md"
+                      m={2}
+                      _light={{
+                        color: "primary.300",
+                      }}
+                      _dark={{
+                        color: "gray.300",
+                      }}
+                    />
+                  }
+                  borderColor="primary.300"
+                  onChangeText={(text) => setEmail(text)}
+                  value={email}
+                  variant="rounded"
+                  placeholder="Email"
+                  _light={{
+                    placeholderTextColor: "primary.300",
+                  }}
+                  _dark={{
+                    placeholderTextColor: "blueGray.50",
+                  }}
+                />
+              </View>
+              <View style={styles.inputText1}>
+                <Input
+                  type={show ? "text" : "password"}
+                  InputLeftElement={
+                    <Icon
+                      as={<MaterialIcons name="lock" />}
+                      size="md"
+                      m={2}
+                      _light={{
+                        color: "primary.300",
+                      }}
+                      _dark={{
+                        color: "gray.300",
+                      }}
+                    />
+                  }
+                  InputRightElement={
+                    <Button
+                      size="sm"
+                      bg="#5061FF"
+                      mr={2}
+                      roundedLeft="md"
+                      roundedRight="md"
+                      onPress={handleClick}
+                    >
+                      {show ? "Hide" : "Show"}
+                    </Button>
+                  }
+                  borderColor="primary.300"
+                  onChangeText={(text) => setPassword(text)}
+                  value={password}
+                  placeholder="Password"
+                  variant="rounded"
+                  _light={{
+                    placeholderTextColor: "#5061FF",
+                  }}
+                  _dark={{
+                    placeholderTextColor: "blueGray.50",
+                  }}
+                />
+              </View>
+              <Text
+                style={styles.forgotPasswordText}
+                onPress={() => navigation.navigate("Register")}
               >
-                {show ? "Hide" : "Show"}
+                Forgot password?
+              </Text>
+              <Button style={styles.loginButton} onPress={doLogin}>
+                Log in
               </Button>
-            }
-            borderColor="primary.300"
-            onChangeText={(text) => setPassword(text)}
-            value={password}
-            placeholder="Password"
-            variant="rounded"
-            _light={{
-              placeholderTextColor: "#5061FF",
-            }}
-            _dark={{
-              placeholderTextColor: "blueGray.50",
-            }}
-          />
-        </View>
-        <Text
-          style={styles.forgotPasswordText}
-          onPress={() => navigation.navigate("Register")}
-        >
-          Forgot password?
-        </Text>
-        <Button style={styles.loginButton} onPress={doLogin}>
-          Log in
-        </Button>
-        {/*}
+              {/*}
         <Toast
           ref={(toast) => (this.toast = toast)}
           style={{ backgroundColor: "red", padding: 15 }}
@@ -157,32 +172,25 @@ function WelcomeScreen({ navigation }) {
           textStyle={{ color: "white" }}
         />
           */}
-        <View>
-          <Text
-            style={styles.signUpText}
-            onPress={() => navigation.navigate("Register")}
-          >
-            Registration
-          </Text>
-        </View>
-      </View>
-    </NativeBaseProvider>
+              <View>
+                <Text
+                  style={styles.signUpText}
+                  onPress={() => navigation.navigate("Register")}
+                >
+                  Registration
+                </Text>
+              </View>
+            </VStack>
+          </Box>
+        </Center>
+      </NativeBaseProvider>
+    </KeyboardAvoidingView>
   );
 }
 
 export default WelcomeScreen;
 
 const styles = StyleSheet.create({
-  background: {
-    flex: 1,
-    backgroundColor: "#FFFFFF",
-    alignItems: "center",
-    justifyContent: "flex-end",
-  },
-  background2: {
-    top: 340,
-    width: "100%",
-  },
   header2: {
     top: 50,
     fontSize: 30,
@@ -190,43 +198,22 @@ const styles = StyleSheet.create({
   },
   inputText1: {
     height: 60,
-    bottom: 200,
-    width: "84%",
+    width: "90%",
     fontSize: 20,
     fontWeight: "bold",
   },
   loginButton: {
     height: 52,
-    width: "84%",
-    bottom: 180,
+    width: "90%",
     borderRadius: 25,
   },
-  registerButton: {
-    borderRadius: 10,
-    height: 50,
-    width: "75%",
-    bottom: 100,
-    shadowColor: "#000000",
-    shadowOpacity: 0.3,
-    elevation: 6,
-    shadowRadius: 5,
-    shadowOffset: { width: 0.2, height: 0.2 },
-  },
-  buttonText: {
-    fontSize: 30,
-    bottom: 145,
-    right: 115,
-    fontWeight: "bold",
-    color: "#0ea5e9",
-  },
   forgotPasswordText: {
-    bottom: 205,
-    left: 110,
+    left: 90,
     fontSize: 15,
+    bottom: 20,
     color: "#a1a1aa",
   },
   signUpText: {
-    bottom: 140,
     fontSize: 20,
     color: "#5061FF",
     alignItems: "center",
@@ -245,8 +232,8 @@ const styles = StyleSheet.create({
     color: "#5F5F5F",
   },
   logoContainer: {
-    position: "absolute",
-    top: 5,
     alignItems: "center",
+    bottom: 120,
+    marginBottom: 50,
   },
 });

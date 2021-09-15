@@ -1,6 +1,12 @@
 import React, { useState } from "react";
-import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
-import { StyleSheet, View, Image, Text } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Image,
+  Text,
+  KeyboardAvoidingView,
+  Platform,
+} from "react-native";
 import { firebase } from "../firebase/config";
 import Toast, { DURATION } from "react-native-easy-toast";
 import {
@@ -8,15 +14,31 @@ import {
   Box,
   Heading,
   VStack,
-  FormControl,
   Input,
   Button,
-  Icon,
-  IconButton,
-  HStack,
+  Center,
+  extendTheme,
 } from "native-base";
 
 function RegisterScreen({ navigation }) {
+  const theme = extendTheme({
+    colors: {
+      // Add new color
+      primary: {
+        50: "#e3e8ff",
+        100: "#b2baff",
+        200: "#7f8cff",
+        300: "#4d5eff",
+        400: "#1d30fe",
+        500: "#4d5eff",
+        600: "#0011b3",
+        700: "#000c81",
+        800: "#000650",
+        900: "#000120",
+      },
+      // Redefinig only one shade, rest of the color will remain same.
+    },
+  });
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -46,7 +68,7 @@ function RegisterScreen({ navigation }) {
         // Add data to user's db reference
         firebase
           .database()
-          .ref("users/" + uid)
+          .ref("users/" + uid + "/credentials")
           .set(data)
           .then(() => {})
           .catch((error) => {
@@ -67,9 +89,14 @@ function RegisterScreen({ navigation }) {
   };
 
   return (
-    <NativeBaseProvider>
-      <Box safeArea flex={1} p={2} mt={16} w="90%" mx="auto">
-        {/*<Toast
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : null}
+      style={{ flex: 1 }}
+    >
+      <NativeBaseProvider safeArea theme={theme}>
+        <Center flex={1}>
+          <Box p={2} mt={16} w="90%" mx="auto">
+            {/*<Toast
           ref={(toast) => (this.toast = toast)}
           style={{ backgroundColor: "red", padding: 15 }}
           position="bottom"
@@ -80,110 +107,102 @@ function RegisterScreen({ navigation }) {
           textStyle={{ color: "white" }}
         />*/}
 
-        <VStack space={5} mt={2}>
-          <Image
-            style={styles.centerImage}
-            source={require("../assets/registerCenter.png")}
-          ></Image>
-          <Heading size="2xl" style={styles.header}>
-            Create account
-          </Heading>
-          <VStack space={5} mt={1}>
-            <View style={styles.inputText1}>
-              <Input
-                borderColor="#5061FF"
-                onChangeText={(text) => setFullName(text)}
-                value={fullName}
-                placeholder="Username"
-                variant="rounded"
-                _light={{
-                  placeholderTextColor: "#5061FF",
-                }}
-                _dark={{
-                  placeholderTextColor: "blueGray.50",
-                }}
-              />
-            </View>
-            <View style={styles.inputText1}>
-              <Input
-                borderColor="#5061FF"
-                onChangeText={(text) => setEmail(text)}
-                value={email}
-                placeholder="Email"
-                variant="rounded"
-                _light={{
-                  placeholderTextColor: "#5061FF",
-                }}
-                _dark={{
-                  placeholderTextColor: "blueGray.50",
-                }}
-              />
-            </View>
-            <View style={styles.inputText1}>
-              <Input
-                borderColor="#5061FF"
-                onChangeText={(text) => setPassword(text)}
-                value={password}
-                placeholder="Password"
-                variant="rounded"
-                _light={{
-                  placeholderTextColor: "#5061FF",
-                }}
-                _dark={{
-                  placeholderTextColor: "blueGray.50",
-                }}
-              />
-            </View>
-            <View style={styles.inputText1}>
-              <Input
-                borderColor="#5061FF"
-                onChangeText={(text) => setConfirmPassword(text)}
-                value={confirmPassword}
-                placeholder="Confirm password"
-                variant="rounded"
-                _light={{
-                  placeholderTextColor: "#5061FF",
-                }}
-                _dark={{
-                  placeholderTextColor: "blueGray.50",
-                }}
-              />
-            </View>
-            <Button style={styles.registerButton} onPress={doRegister}>
-              Register
-            </Button>
-            <Text style={styles.bottomText}>Already have account?</Text>
-            <Text
-              style={styles.loginButton}
-              onPress={() => navigation.navigate("WelcomeScreen")}
-            >
-              Login
-            </Text>
-          </VStack>
-        </VStack>
-      </Box>
-    </NativeBaseProvider>
+            <VStack space={5} mt={2}>
+              <Image
+                style={styles.centerImage}
+                source={require("../assets/registerCenter.png")}
+              ></Image>
+              <Heading size="2xl" style={styles.header}>
+                Create account
+              </Heading>
+              <VStack space={5} mt={1}>
+                <View style={styles.inputText1}>
+                  <Input
+                    borderColor="#5061FF"
+                    onChangeText={(text) => setFullName(text)}
+                    value={fullName}
+                    placeholder="Username"
+                    variant="rounded"
+                    _light={{
+                      placeholderTextColor: "#5061FF",
+                    }}
+                    _dark={{
+                      placeholderTextColor: "blueGray.50",
+                    }}
+                  />
+                </View>
+                <View style={styles.inputText1}>
+                  <Input
+                    borderColor="#5061FF"
+                    onChangeText={(text) => setEmail(text)}
+                    value={email}
+                    placeholder="Email"
+                    variant="rounded"
+                    _light={{
+                      placeholderTextColor: "#5061FF",
+                    }}
+                    _dark={{
+                      placeholderTextColor: "blueGray.50",
+                    }}
+                  />
+                </View>
+                <View style={styles.inputText1}>
+                  <Input
+                    borderColor="#5061FF"
+                    onChangeText={(text) => setPassword(text)}
+                    value={password}
+                    placeholder="Password"
+                    variant="rounded"
+                    _light={{
+                      placeholderTextColor: "#5061FF",
+                    }}
+                    _dark={{
+                      placeholderTextColor: "blueGray.50",
+                    }}
+                  />
+                </View>
+                <View style={styles.inputText1}>
+                  <Input
+                    borderColor="#5061FF"
+                    onChangeText={(text) => setConfirmPassword(text)}
+                    value={confirmPassword}
+                    placeholder="Confirm password"
+                    variant="rounded"
+                    _light={{
+                      placeholderTextColor: "#5061FF",
+                    }}
+                    _dark={{
+                      placeholderTextColor: "blueGray.50",
+                    }}
+                  />
+                </View>
+                <Button style={styles.registerButton} onPress={doRegister}>
+                  Register
+                </Button>
+                <Text style={styles.bottomText}>Already have account?</Text>
+                <Text
+                  style={styles.loginButton}
+                  onPress={() => navigation.navigate("WelcomeScreen")}
+                >
+                  Login
+                </Text>
+              </VStack>
+            </VStack>
+          </Box>
+        </Center>
+      </NativeBaseProvider>
+    </KeyboardAvoidingView>
   );
 }
 
 export default RegisterScreen;
 
 const styles = StyleSheet.create({
-  button: {
-    height: 50,
-    borderRadius: 15,
-    shadowColor: "#000000",
-    shadowOpacity: 0.3,
-    elevation: 6,
-    shadowRadius: 5,
-    shadowOffset: { width: 0.5, height: 0.5 },
-  },
   header: {
     color: "#5F5F5F",
   },
   registerButton: {
     height: 52,
-    backgroundColor: "#5061FF",
     borderRadius: 25,
   },
   centerImage: {
