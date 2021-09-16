@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { firebase } from "../../firebase/config";
 import Toast, { DURATION } from "react-native-easy-toast";
+import theme from "../styles";
 import {
   NativeBaseProvider,
   Box,
@@ -17,28 +18,9 @@ import {
   Input,
   Button,
   Center,
-  extendTheme,
 } from "native-base";
 
 function RegisterScreen({ navigation }) {
-  const theme = extendTheme({
-    colors: {
-      // Add new color
-      primary: {
-        50: "#e3e8ff",
-        100: "#b2baff",
-        200: "#7f8cff",
-        300: "#4d5eff",
-        400: "#1d30fe",
-        500: "#4d5eff",
-        600: "#0011b3",
-        700: "#000c81",
-        800: "#000650",
-        900: "#000120",
-      },
-      // Redefinig only one shade, rest of the color will remain same.
-    },
-  });
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
