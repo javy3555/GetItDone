@@ -36,7 +36,8 @@ import {
 } from "react-native";
 import { SwipeListView } from "react-native-swipe-list-view";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { firebase } from "../firebase/config";
+import { firebase } from "../../firebase/config";
+import CalendarStrip from "react-native-calendar-strip";
 
 export default function ({ navigation }) {
   const theme = extendTheme({
@@ -86,6 +87,14 @@ export default function ({ navigation }) {
   if (user != null) {
     uid = user.uid;
   }
+
+  let datesWhitelist = [
+    {
+      start: moment(),
+      end: moment().add(3, "days"), // total 4 days enabled
+    },
+  ];
+  let datesBlacklist = [moment().add(1, "days")]; // 1 day disabled
 
   const fetchList = async () => {
     const response = firebase.database().ref("users/" + uid + "/tasks");
@@ -178,6 +187,17 @@ export default function ({ navigation }) {
     else return "white";
   };
 
+  const getMarketDates = () => {
+    const temp = list.map((item) =>
+      itemI !== index
+        ? item
+        : {
+            ...item,
+            isCompleted: !item.isCompleted,
+          }
+    );
+  };
+
   /// Swipe functions ///
 
   const closeRow = (rowMap, rowKey) => {
@@ -264,7 +284,7 @@ export default function ({ navigation }) {
       </Pressable>
       <Pressable
         px={4}
-        bg="red.500"
+        bg="#ef4444"
         justifyContent="center"
         style={{
           borderBottomRightRadius: 10,
@@ -299,36 +319,35 @@ export default function ({ navigation }) {
         >
           <NativeBaseProvider theme={theme} safeArea>
             <Center flex={1}>
-              <VStack space={4} flex={1} w="90%" mt={8}>
-                <Heading color="#4d5eff" size="2xl">
+              <CalendarStrip
+                scrollable
+                style={{
+                  height: 150,
+                  paddingTop: 50,
+                  paddingBottom: 2,
+                  width: "120%",
+                }}
+                daySelectionAnimation={{
+                  type: "background",
+                  duration: 200,
+                  borderWidth: 1,
+                  borderHighlightColor: "white",
+                  highlightColor: "white",
+                }}
+                responsiveSizingOffset={9}
+                calendarColor={"#4d5eff"}
+                calendarHeaderStyle={{ color: "white", fontSize: 20 }}
+                dateNumberStyle={{ color: "white" }}
+                dateNameStyle={{ color: "white" }}
+                iconContainer={{ flex: 0.1 }}
+                leftSelector={[]}
+                rightSelector={[]}
+                selectedDate={date2}
+              />
+              <VStack space={4} flex={1} w="90%" mt={5}>
+                <Heading color="#4d5eff" size="lg">
                   All tasks
                 </Heading>
-                <Input
-                  variant="filled"
-                  InputRightElement={
-                    <IconButton
-                      icon={
-                        <Icon
-                          as={FontAwesome5}
-                          color="grey"
-                          name="search"
-                          size={4}
-                        />
-                      }
-                      color="primary.300"
-                      ml={1}
-                      onPress={() => {
-                        addItem(searchValue);
-                        setSearchValue("");
-                      }}
-                      mr={1}
-                    />
-                  }
-                  onChangeText={(v) => setSearchValue(v)}
-                  value={searchValue}
-                  placeholder="Search"
-                />
-
                 <SwipeListView
                   data={list}
                   renderItem={renderItem}
@@ -397,7 +416,7 @@ export default function ({ navigation }) {
                     >
                       <Image
                         style={{ height: 100, width: 122, right: 3 }}
-                        source={require("../assets/easy-icon.png")}
+                        source={require("../../assets/easy-icon.png")}
                       ></Image>
                     </TouchableOpacity>
                     <TouchableOpacity
@@ -413,7 +432,7 @@ export default function ({ navigation }) {
                     >
                       <Image
                         style={{ height: 100, width: 122, right: 3 }}
-                        source={require("../assets/medium-icon.png")}
+                        source={require("../../assets/medium-icon.png")}
                       ></Image>
                     </TouchableOpacity>
                     <TouchableOpacity
@@ -430,7 +449,7 @@ export default function ({ navigation }) {
                     >
                       <Image
                         style={{ height: 100, width: 122, right: 3 }}
-                        source={require("../assets/hard-icon.png")}
+                        source={require("../../assets/hard-icon.png")}
                       ></Image>
                     </TouchableOpacity>
                   </View>

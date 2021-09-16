@@ -19,7 +19,7 @@ import {
   VStack,
 } from "native-base";
 import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
-import { firebase } from "../firebase/config";
+import { firebase } from "../../firebase/config";
 import Toast from "react-native-easy-toast";
 
 function WelcomeScreen({ navigation }) {
@@ -78,7 +78,7 @@ function WelcomeScreen({ navigation }) {
                 <Text style={styles.title}>GetItDone</Text>
                 <Image
                   style={styles.logo}
-                  source={require("../assets/checkmark.png")}
+                  source={require("../../assets/checkmark.png")}
                 ></Image>
                 <Text style={styles.header2}>Log in</Text>
               </View>

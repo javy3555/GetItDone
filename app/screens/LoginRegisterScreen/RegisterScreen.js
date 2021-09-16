@@ -7,7 +7,7 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
-import { firebase } from "../firebase/config";
+import { firebase } from "../../firebase/config";
 import Toast, { DURATION } from "react-native-easy-toast";
 import {
   NativeBaseProvider,
@@ -110,7 +110,7 @@ function RegisterScreen({ navigation }) {
             <VStack space={5} mt={2}>
               <Image
                 style={styles.centerImage}
-                source={require("../assets/registerCenter.png")}
+                source={require("../../assets/registerCenter.png")}
               ></Image>
               <Heading size="2xl" style={styles.header}>
                 Create account

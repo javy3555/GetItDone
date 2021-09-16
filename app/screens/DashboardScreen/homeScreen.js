@@ -16,7 +16,7 @@ import {
 } from "react-native-paper";
 import todoScreen from "./todoScreen";
 import profileScreen from "./profileScreen";
-import { firebase } from "../firebase/config";
+import { firebase } from "../../firebase/config";
 import React from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { Text, StyleSheet, View } from "react-native";
@@ -28,11 +28,9 @@ function DoLogout(props) {
 
   var userId = firebase.auth().currentUser.uid;
   const ref = firebase.database().ref("users/" + userId + "/credentials/");
-  ref
-    .child("fullName")
-    .on("value", (snapshot) => {
-      username = snapshot.val();
-    });
+  ref.child("fullName").on("value", (snapshot) => {
+    username = snapshot.val();
+  });
 
   const changeAvatar = () => {
     console.log("Hello");
@@ -59,7 +57,7 @@ function DoLogout(props) {
       <View style={styles.userInfoSection}>
         <View style={{ flexDirection: "row", marginTop: 15, marginBottom: 20 }}>
           <Avatar.Image
-            source={require("../assets/avatars/Dog_4.png")}
+            source={require("../../assets/avatars/Dog_4.png")}
             size={80}
           />
           <View
