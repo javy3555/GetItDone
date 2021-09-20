@@ -17,12 +17,11 @@ import {
   Spinner,
 } from "native-base";
 import moment from "moment";
-import { FontAwesome5, AntDesign } from "@expo/vector-icons";
+import { FontAwesome5, AntDesign, MaterialIcons } from "@expo/vector-icons";
 import {
   Platform,
   KeyboardAvoidingView,
   View,
-  Image,
   TouchableOpacity,
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
@@ -30,8 +29,10 @@ import { firebase } from "../../firebase/config";
 import Calendar from "./Components/calendar";
 import Swipe from "./Components/swipe";
 import theme from "../styles";
+import styles from "../../assets/styles/todoStyles";
 
 export default function ({ navigation }) {
+  const [refresh, setRefresh] = useState("");
   const [list, setList] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [date2, setDate] = useState(new Date(Date.now()));
@@ -45,6 +46,7 @@ export default function ({ navigation }) {
   const [isLoading, setIsLoading] = useState(true);
   const [level, setLevel] = useState("");
   const [isMounted, setIsMounted] = useState(true);
+  const [emptyMessage, setEmptyMessage] = useState(false);
 
   const userData = [];
   var user = firebase.auth().currentUser;
@@ -69,6 +71,7 @@ export default function ({ navigation }) {
   };
 
   useEffect(() => {
+    setRefresh({});
     fetchList();
   }, [isMounted, calendarDate]); // removed lists from subscription []
 
@@ -91,7 +94,7 @@ export default function ({ navigation }) {
 
     firebase
       .database()
-      .ref("/users/" + uid + "/tasks")
+      .ref("/users/" + uid + "/tasks/")
       .push(task);
 
     setDate(new Date(Date.now()));
@@ -119,6 +122,25 @@ export default function ({ navigation }) {
     setLevel(level);
   };
 
+  const handleEmptyMessage = () => {
+    return (
+      <VStack>
+        <Center alignItems="center" marginBottom={180}>
+          <Text color="#a1a1aa" marginTop={0}>
+            All clear
+          </Text>
+          <Text color="#a1a1aa" marginTop={1}>
+            Looks like you have no task for{" "}
+            {moment(calendarDate).format("MMM Do YY")}
+          </Text>
+          <Text color="#a1a1aa" marginTop={1}>
+            Tap + to add a task
+          </Text>
+        </Center>
+      </VStack>
+    );
+  };
+
   return (
     <>
       {isLoading && (
@@ -138,14 +160,21 @@ export default function ({ navigation }) {
         >
           <NativeBaseProvider theme={theme} safeArea>
             <Center flex={1}>
-              <Calendar
-                date={date2}
-                list={list}
-                setCalendarDate={setCalendarDate}
-                calendarDate={calendarDate}
-              />
-              <VStack space={4} flex={1} w="90%" mt={5}>
-                <Heading color="#4d5eff" size="lg">
+              <HStack>
+                <Calendar
+                  date={date2}
+                  list={list}
+                  setCalendarDate={setCalendarDate}
+                  calendarDate={calendarDate}
+                  setEmptyMessage={setEmptyMessage}
+                />
+                <Icon
+                  as={<MaterialIcons name="menu" />}
+                  style={styles.menuIcon}
+                />
+              </HStack>
+              <VStack space={4} flex={1} w="100%" mt={3}>
+                <Heading color="#4d5eff" size="lg" ml={3}>
                   All tasks
                 </Heading>
                 <Swipe
@@ -154,7 +183,10 @@ export default function ({ navigation }) {
                   firebase={firebase}
                   uid={uid}
                   calendarDate={calendarDate}
+                  refresh={refresh}
+                  setEmptyMessage={setEmptyMessage}
                 />
+                {emptyMessage && handleEmptyMessage()}
               </VStack>
               <Box position="relative" h={200} w="100%">
                 <Fab
@@ -172,7 +204,7 @@ export default function ({ navigation }) {
                 isOpen={showModal}
                 onClose={() => setShowModal(false)}
               >
-                <Actionsheet.Content style={{ height: 460 }}>
+                <Actionsheet.Content style={{ height: 400 }}>
                   <Text
                     style={{ fontSize: 25, fontWeight: "bold", right: 129 }}
                   >
@@ -188,70 +220,52 @@ export default function ({ navigation }) {
                     onChangeText={(v) => setTaskName(v)}
                     value={taskName}
                   />{" "}
-                  <Text
-                    style={{
-                      right: 130,
-                      fontSize: 18,
-                      bottom: 10,
-                      fontWeight: "bold",
-                    }}
-                  >
-                    Dificulty level
-                  </Text>{" "}
-                  <View style={{ flexDirection: "row", bottom: 20 }}>
+                  <Text style={styles.priorityText}>Priority level</Text>{" "}
+                  <View style={styles.priorityContainer}>
                     <TouchableOpacity
                       style={{
+                        alignSelf: "center",
                         right: 10,
-                        width: "30%",
-                        height: 100,
-                        borderWidth: 1.5,
-                        borderColor: "#86efac",
+                        width: "25%",
+                        height: 35,
                         backgroundColor:
-                          level == "easy" ? "#bbf7d0" : "transparent",
+                          level == "easy" ? "#bbf7d0" : "#4ade80",
+                        borderRadius: 7,
                       }}
                       onPress={() => handleLevel("easy")}
                     >
-                      <Image
-                        style={{ height: 100, width: 122, right: 3 }}
-                        source={require("../../assets/easy-icon.png")}
-                      ></Image>
+                      <Text style={styles.lowText}>Low</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
                       style={{
-                        height: 100,
-                        width: "30%",
-                        borderWidth: 1.5,
-                        borderColor: "#fdba74",
+                        alignSelf: "center",
+                        justifySelf: "center",
+                        width: "25%",
+                        height: 35,
                         backgroundColor:
-                          level == "medium" ? "#fed7aa" : "transparent",
+                          level == "medium" ? "#fed7aa" : "#fb923c",
+                        borderRadius: 7,
                       }}
                       onPress={() => handleLevel("medium")}
                     >
-                      <Image
-                        style={{ height: 100, width: 122, right: 3 }}
-                        source={require("../../assets/medium-icon.png")}
-                      ></Image>
+                      <Text style={styles.mediumText}>Medium</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
                       style={{
                         left: 10,
-                        width: "30%",
-                        height: 100,
-                        borderWidth: 1.5,
-                        borderColor: "#fca5a5",
+                        width: "25%",
+                        height: 35,
+                        borderRadius: 7,
                         backgroundColor:
-                          level == "hard" ? "#fecaca" : "transparent",
+                          level == "hard" ? "#fecaca" : "#f87171",
                       }}
                       onPress={() => handleLevel("hard")}
                     >
-                      <Image
-                        style={{ height: 100, width: 122, right: 3 }}
-                        source={require("../../assets/hard-icon.png")}
-                      ></Image>
+                      <Text style={styles.highText}>High</Text>
                     </TouchableOpacity>
                   </View>
                   <Button
-                    style={{ width: "90%", top: 100 }}
+                    style={styles.addButtom}
                     onPress={() => {
                       setShowModal(false);
                       addItem();
@@ -259,34 +273,15 @@ export default function ({ navigation }) {
                   >
                     ADD
                   </Button>
-                  <Text
-                    style={{
-                      right: 129,
-                      fontSize: 18,
-                      bottom: 45,
-                      fontWeight: "bold",
-                    }}
-                  >
-                    Date and time
-                  </Text>{" "}
+                  <Text style={styles.dateTimeText}>Date and time</Text>{" "}
                   <Button
                     bg="transparent"
-                    style={{
-                      width: "90%",
-                      bottom: 50,
-                      borderWidth: 1.5,
-                      borderColor: "#4d5eff",
-                    }}
+                    style={styles.dateTimeButton}
                     onPress={() => {
                       showMode(true);
                     }}
                   >
-                    <Text
-                      style={{
-                        color: "#4d5eff",
-                        right: 4,
-                      }}
-                    >
+                    <Text style={styles.buttonText}>
                       {moment(date2).format(
                         "DD.MM.YYYY, h:mm A                                   "
                       )}
@@ -312,18 +307,7 @@ export default function ({ navigation }) {
                           duration: 250,
                         },
                       }}
-                      style={{
-                        width: "100%",
-                        height: 300,
-                        bottom: 250,
-                        backgroundColor: "white",
-                        borderRadius: 10,
-                        shadowColor: "#000000",
-                        shadowOpacity: 0.3,
-                        elevation: 6,
-                        shadowRadius: 5,
-                        shadowOffset: { width: 0.2, height: 0.2 },
-                      }}
+                      style={styles.dateTimeModal}
                     >
                       <DateTimePicker
                         testID="dateTimePicker"
@@ -334,10 +318,7 @@ export default function ({ navigation }) {
                         onChange={onChange}
                       />
                       <Button
-                        style={{
-                          width: "90%",
-                          alignSelf: "center",
-                        }}
+                        style={styles.doneButton}
                         onPress={() => {
                           showMode(false);
                         }}

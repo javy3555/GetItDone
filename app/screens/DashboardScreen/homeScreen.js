@@ -4,16 +4,7 @@ import {
   DrawerItemList,
   DrawerItem,
 } from "@react-navigation/drawer";
-import {
-  useTheme,
-  Avatar,
-  Title,
-  Caption,
-  Paragraph,
-  TouchableRipple,
-  Switch,
-  Divider,
-} from "react-native-paper";
+import { Avatar, Title, Divider } from "react-native-paper";
 import todoScreen from "./todoScreen";
 import profileScreen from "./profileScreen";
 import { firebase } from "../../firebase/config";

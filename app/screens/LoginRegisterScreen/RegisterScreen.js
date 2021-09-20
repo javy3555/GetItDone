@@ -1,15 +1,11 @@
 import React, { useState } from "react";
 import {
-  StyleSheet,
   View,
   Image,
   Text,
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
-import { firebase } from "../../firebase/config";
-import Toast, { DURATION } from "react-native-easy-toast";
-import theme from "../styles";
 import {
   NativeBaseProvider,
   Box,
@@ -19,6 +15,9 @@ import {
   Button,
   Center,
 } from "native-base";
+import { firebase } from "../../firebase/config";
+import theme from "../styles";
+import styles from "../../assets/styles/registerStyles"
 
 function RegisterScreen({ navigation }) {
   const [fullName, setFullName] = useState("");
@@ -78,21 +77,10 @@ function RegisterScreen({ navigation }) {
       <NativeBaseProvider safeArea theme={theme}>
         <Center flex={1}>
           <Box p={2} mt={16} w="90%" mx="auto">
-            {/*<Toast
-          ref={(toast) => (this.toast = toast)}
-          style={{ backgroundColor: "red", padding: 15 }}
-          position="bottom"
-          positionValue={250}
-          fadeInDuration={750}
-          fadeOutDuration={1000}
-          opacity={0.9}
-          textStyle={{ color: "white" }}
-        />*/}
-
             <VStack space={5} mt={2}>
               <Image
                 style={styles.centerImage}
-                source={require("../../assets/registerCenter.png")}
+                source={require("../../assets/images/registerCenter.png")}
               ></Image>
               <Heading size="2xl" style={styles.header}>
                 Create account
@@ -178,30 +166,3 @@ function RegisterScreen({ navigation }) {
 }
 
 export default RegisterScreen;
-
-const styles = StyleSheet.create({
-  header: {
-    color: "#5F5F5F",
-  },
-  registerButton: {
-    height: 52,
-    borderRadius: 25,
-  },
-  centerImage: {
-    width: 351,
-    height: 185,
-    bottom: 40,
-    left: 0,
-  },
-  bottomText: {
-    left: 67,
-    fontSize: 16,
-    color: "#9A9A9A",
-  },
-  loginButton: {
-    bottom: 39,
-    left: 236,
-    fontSize: 16,
-    color: "#5061FF",
-  },
-});

@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import {
   Image,
   Text,
-  StyleSheet,
   View,
   Platform,
   KeyboardAvoidingView,
@@ -18,8 +17,8 @@ import {
 } from "native-base";
 import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { firebase } from "../../firebase/config";
-import Toast from "react-native-easy-toast";
 import theme from "../styles";
+import styles from "../../assets/styles/loginStyles";
 
 function WelcomeScreen({ navigation }) {
   const [show, setShow] = React.useState(false);
@@ -59,7 +58,7 @@ function WelcomeScreen({ navigation }) {
                 <Text style={styles.title}>GetItDone</Text>
                 <Image
                   style={styles.logo}
-                  source={require("../../assets/checkmark.png")}
+                  source={require("../../assets/icons/checkmark.png")}
                 ></Image>
                 <Text style={styles.header2}>Log in</Text>
               </View>
@@ -141,18 +140,6 @@ function WelcomeScreen({ navigation }) {
               <Button style={styles.loginButton} onPress={doLogin}>
                 Log in
               </Button>
-              {/*}
-        <Toast
-          ref={(toast) => (this.toast = toast)}
-          style={{ backgroundColor: "red", padding: 15 }}
-          position="bottom"
-          positionValue={250}
-          fadeInDuration={750}
-          fadeOutDuration={1000}
-          opacity={0.9}
-          textStyle={{ color: "white" }}
-        />
-          */}
               <View>
                 <Text
                   style={styles.signUpText}
@@ -170,51 +157,3 @@ function WelcomeScreen({ navigation }) {
 }
 
 export default WelcomeScreen;
-
-const styles = StyleSheet.create({
-  header2: {
-    top: 50,
-    fontSize: 30,
-    color: "#575757",
-  },
-  inputText1: {
-    height: 60,
-    width: "90%",
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-  loginButton: {
-    height: 52,
-    width: "90%",
-    borderRadius: 25,
-  },
-  forgotPasswordText: {
-    left: 90,
-    fontSize: 15,
-    bottom: 20,
-    color: "#a1a1aa",
-  },
-  signUpText: {
-    fontSize: 20,
-    color: "#5061FF",
-    alignItems: "center",
-  },
-  logo: {
-    width: 70,
-    height: 71,
-    top: 35,
-    left: 130,
-  },
-  title: {
-    top: 100,
-    right: 35,
-    fontSize: 45,
-    fontFamily: "MontserratAlternatesMedium",
-    color: "#5F5F5F",
-  },
-  logoContainer: {
-    alignItems: "center",
-    bottom: 120,
-    marginBottom: 50,
-  },
-});

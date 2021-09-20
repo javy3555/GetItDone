@@ -1,15 +1,17 @@
 import React from "react";
 import CalendarStrip from "react-native-calendar-strip";
 import moment from "moment";
-function calendar({ date, list, setCalendarDate, calendarDate }) {
-  const userDate = [];
+import { Box } from "native-base";
+import styles from "../../../assets/styles/calendarStyles";
 
-  const handleLevelColor = (level) => {
-    if (level == "easy") return "#bbf7d0";
-    else if (level == "medium") return "#fed7aa";
-    else if (level == "hard") return "#fecaca";
-    else return "white";
-  };
+function calendar({
+  date,
+  list,
+  setCalendarDate,
+  calendarDate,
+  setEmptyMessage,
+}) {
+  const userDate = [];
 
   const getMarkedDates = () => {
     list.map((item) => {
@@ -17,8 +19,8 @@ function calendar({ date, list, setCalendarDate, calendarDate }) {
         date: item.date,
         dots: [
           {
-            color: "white",
-            selectedColor: "black",
+            color: "#4d5eff",
+            selectedColor: "white",
           },
         ],
       });
@@ -26,37 +28,44 @@ function calendar({ date, list, setCalendarDate, calendarDate }) {
     return userDate;
   };
 
-  const handleSelectedDate = (date) => {
+  const handleOnSelectedDate = (date) => {
     setCalendarDate(moment(date).format("YYYY-MM-DD"));
+    for (var i = 0; i < list.length; i++) {
+      if (list[i].date == moment(date).format("YYYY-MM-DD")) {
+        setEmptyMessage(false);
+        return;
+      }
+    }
+    setEmptyMessage(true);
   };
+
   return (
-    <CalendarStrip
-      scrollable
-      style={{
-        height: 150,
-        paddingTop: 50,
-        paddingBottom: 2,
-        width: "120%",
-      }}
-      daySelectionAnimation={{
-        type: "background",
-        duration: 200,
-        borderWidth: 1,
-        borderHighlightColor: "white",
-        highlightColor: "white",
-      }}
-      responsiveSizingOffset={9}
-      calendarColor={"#4d5eff"}
-      calendarHeaderStyle={{ color: "white", fontSize: 20 }}
-      dateNumberStyle={{ color: "white" }}
-      dateNameStyle={{ color: "white" }}
-      iconContainer={{ flex: 0.1 }}
-      leftSelector={[]}
-      rightSelector={[]}
-      selectedDate={calendarDate}
-      markedDates={getMarkedDates()}
-      onDateSelected={handleSelectedDate}
-    />
+    <Box style={styles.calendarContainer}>
+      <CalendarStrip
+        scrollable
+        style={styles.calendarStyle}
+        daySelectionAnimation={{
+          type: "background",
+          duration: 20,
+          borderWidth: 2,
+          highlightColor: "#4d5eff",
+        }}
+        responsiveSizingOffset={4}
+        calendarColor={"#F2F2F2"}
+        calendarHeaderStyle={styles.headerStyle}
+        dateNumberStyle={{ color: "#3f3f46" }}
+        dateNameStyle={{ color: "#52525b" }}
+        highlightDateNameStyle={{ color: "white" }}
+        highlightDateNumberStyle={{ color: "white" }}
+        iconContainer={{ flex: 0.1 }}
+        leftSelector={[]}
+        rightSelector={[]}
+        selectedDate={calendarDate}
+        startingDate={moment(date).subtract(3, "days").format("YYYY-MM-DD")}
+        markedDates={getMarkedDates()}
+        onDateSelected={handleOnSelectedDate}
+      />
+    </Box>
   );
 }
 
