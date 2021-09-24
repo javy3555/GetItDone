@@ -6,12 +6,12 @@ import {
 } from "@react-navigation/drawer";
 
 import { Avatar, Title, Divider } from "react-native-paper";
-import todoScreen from "./todoScreen";
-import profile from "./profile";
-import Avatars from "../DashboardScreen/Components/avatars";
+import TodoScreen from "./todoScreen";
+import Profile from "./profile";
+import Support from "./support";
+import Avatars from "./Components/avatars";
 import { firebase } from "../../firebase/config";
 import React from "react";
-import { useState, useEffect } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { Text, StyleSheet, View } from "react-native";
 
@@ -34,7 +34,7 @@ function DoLogout(props) {
         console.log("Sign-out successful.");
         props.navigation.reset({
           index: 0,
-          routes: [{ name: "WelcomeScreen" }],
+          routes: [{ name: "Login" }],
         });
       })
       .catch((error) => {
@@ -70,7 +70,7 @@ function DoLogout(props) {
             style={{
               marginLeft: 15,
               flexDirection: "column",
-              marginTop: 10,
+              alignSelf: "center",
             }}
           >
             <Title style={styles.title} numberOfLines={1}>
@@ -84,22 +84,23 @@ function DoLogout(props) {
         <Divider />
 
         <DrawerItemList {...props} />
-        <DrawerItem
-          marginTop={300}
-          label="Logout"
-          activeTintColor="#5061FF"
-          inactiveTintColor="#5061FF"
-          icon={({ focused, size }) => (
-            <Ionicons
-              name="log-out-outline"
-              size={30}
-              color={focused ? "#5061FF" : "#5061FF"}
-            />
-          )}
-          onPress={() => {
-            doLogout();
-          }}
-        />
+        <View style={{ marginTop: 340 }}>
+          <DrawerItem
+            label="Logout"
+            activeTintColor="#5061FF"
+            inactiveTintColor="#5061FF"
+            icon={({ focused, size }) => (
+              <Ionicons
+                name="log-out-outline"
+                size={30}
+                color={focused ? "#5061FF" : "#5061FF"}
+              />
+            )}
+            onPress={() => {
+              doLogout();
+            }}
+          />
+        </View>
       </View>
     </DrawerContentScrollView>
   );
@@ -107,7 +108,7 @@ function DoLogout(props) {
 
 const Drawer = createDrawerNavigator();
 
-function homeScreen({ navigation }) {
+function drawer({ navigation }) {
   const user = firebase.auth().currentUser;
   const userAvatar = user.photoURL;
   return (
@@ -123,7 +124,7 @@ function homeScreen({ navigation }) {
     >
       <Drawer.Screen
         name="Home"
-        component={todoScreen}
+        component={TodoScreen}
         options={{
           headerShown: false,
           drawerActiveTintColor: "#5061FF",
@@ -139,7 +140,7 @@ function homeScreen({ navigation }) {
       />
       <Drawer.Screen
         name="Profile"
-        component={profile}
+        component={Profile}
         options={{
           headerShown: false,
           drawerActiveTintColor: "#5061FF",
@@ -154,24 +155,8 @@ function homeScreen({ navigation }) {
         }}
       />
       <Drawer.Screen
-        name="Settings"
-        component={profile}
-        options={{
-          headerShown: false,
-          drawerActiveTintColor: "#5061FF",
-          drawerInactiveTintColor: "#5061FF",
-          drawerIcon: ({ focused, size }) => (
-            <Ionicons
-              name="settings-outline"
-              size={30}
-              color={focused ? "#5061FF" : "#5061FF"}
-            />
-          ),
-        }}
-      />
-      <Drawer.Screen
         name="Support"
-        component={profile}
+        component={Support}
         options={{
           headerShown: false,
           drawerActiveTintColor: "#5061FF",
@@ -189,7 +174,7 @@ function homeScreen({ navigation }) {
   );
 }
 
-export default homeScreen;
+export default drawer;
 
 const styles = StyleSheet.create({
   drawerContent: {
@@ -199,7 +184,7 @@ const styles = StyleSheet.create({
     paddingLeft: 20,
   },
   title: {
-    fontSize: 26,
+    fontSize: 22,
     marginTop: 3,
     fontWeight: "bold",
     width: 150,

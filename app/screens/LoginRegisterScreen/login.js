@@ -37,7 +37,7 @@ function WelcomeScreen({ navigation }) {
       .then((response) => {
         const user = firebase.auth().currentUser;
 
-        navigation.navigate("homeScreen");
+        navigation.navigate("Drawer");
       })
       .catch((error) => {
         var errorCode = error.code;
@@ -148,7 +148,11 @@ function WelcomeScreen({ navigation }) {
                 Forgot password?
               </Text>
               <Button style={styles.loginButton} onPress={doLogin}>
-                <Text style={{fontSize: 18, color : "white", fontWeight: "bold"}}>Log in</Text>
+                <Text
+                  style={{ fontSize: 15, color: "white", fontWeight: "bold" }}
+                >
+                  Log in
+                </Text>
               </Button>
               <View>
                 <Text

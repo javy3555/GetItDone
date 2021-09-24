@@ -24,7 +24,7 @@ function landingScreen({ navigation }) {
         </View>
         <Button
           style={styles.loginButton}
-          onPress={() => navigation.navigate("WelcomeScreen")}
+          onPress={() => navigation.navigate("Login")}
         >
           Login
         </Button>

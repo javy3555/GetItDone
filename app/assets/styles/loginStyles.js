@@ -24,7 +24,7 @@ export default StyleSheet.create({
     color: "#a1a1aa",
   },
   signUpText: {
-    fontSize: 19,
+    fontSize: 18,
     color: "#5061FF",
     alignItems: "center",
   },

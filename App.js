@@ -4,11 +4,11 @@ import "./app/firebase/config";
 import React, { useState } from "react";
 import AppLoading from "expo-app-loading";
 import { KeyboardAvoidingView, Platform } from "react-native";
-import WelcomeScreen from "./app/screens/LoginRegisterScreen/WelcomeScreen";
-import RegisterScreen from "./app/screens/LoginRegisterScreen/RegisterScreen";
-import homeScreen from "./app/screens/DashboardScreen/homeScreen";
+import Login from "./app/screens/LoginRegisterScreen/login";
+import Register from "./app/screens/LoginRegisterScreen/register";
+import Drawer from "./app/screens/DashboardScreen/drawer";
 import landingScreen from "./app/screens/landingScreen";
-import settingsScreen from "./app/screens/DashboardScreen/settingsScreen";
+import Support from "./app/screens/DashboardScreen/support";
 import profile from "./app/screens/DashboardScreen/profile";
 import useFonts from "./app/assets/hooks/useFonts";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -42,8 +42,8 @@ export default function App() {
           }}
         />
         <Stack.Screen
-          name="WelcomeScreen"
-          component={WelcomeScreen}
+          name="Login"
+          component={Login}
           options={{
             headerShown: false,
           }}
@@ -53,19 +53,19 @@ export default function App() {
           options={{
             headerShown: false,
           }}
-          component={RegisterScreen}
+          component={Register}
         />
         <Stack.Screen
-          name="homeScreen"
-          component={homeScreen}
+          name="Drawer"
+          component={Drawer}
           options={{
             headerShown: false,
             gestureEnabled: false,
           }}
         />
         <Stack.Screen
-          name="settingsScreen"
-          component={settingsScreen}
+          name="Support"
+          component={Support}
           options={{
             headerShown: false,
           }}

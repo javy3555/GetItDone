@@ -5,6 +5,7 @@ import {
   Text,
   KeyboardAvoidingView,
   Platform,
+  Alert,
 } from "react-native";
 import {
   NativeBaseProvider,
@@ -34,7 +35,7 @@ function RegisterScreen({ navigation }) {
     // If passwords don't match
     if (password !== confirmPassword) {
       //alert("Passwords don't match.")
-      setMessage("Passwords don't match.");
+      Alert.alert("Passwords don't match.");
       return;
     }
 
@@ -50,7 +51,7 @@ function RegisterScreen({ navigation }) {
         };
 
         firebase.auth().currentUser.updateProfile({
-          displayName: data.fullName,
+          displayName: `@${data.fullName}`,
           photoURL: avatar,
         });
 
@@ -63,16 +64,16 @@ function RegisterScreen({ navigation }) {
           .catch((error) => {
             var errorCode = error.code;
             var errorMessage = error.message;
-            console.log(errorMessage);
+            Alert.alert(errorMessage);
             //this.toast.show(errorMessage, 600);
           });
-        navigation.navigate("WelcomeScreen");
+        navigation.navigate("Login");
       })
       .catch(function (error) {
         // Handle Errors here.
         var errorCode = error.code;
         var errorMessage = error.message;
-        console.log(errorMessage);
+        Alert.alert(errorMessage);
         //this.toast.show(errorMessage, 600);
       });
   };
@@ -160,7 +161,7 @@ function RegisterScreen({ navigation }) {
                 <Text style={styles.bottomText}>Already have account?</Text>
                 <Text
                   style={styles.loginButton}
-                  onPress={() => navigation.navigate("WelcomeScreen")}
+                  onPress={() => navigation.navigate("Login")}
                 >
                   Login
                 </Text>
