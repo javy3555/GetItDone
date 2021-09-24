@@ -4,28 +4,27 @@ import {
   DrawerItemList,
   DrawerItem,
 } from "@react-navigation/drawer";
+
 import { Avatar, Title, Divider } from "react-native-paper";
 import todoScreen from "./todoScreen";
-import profileScreen from "./profileScreen";
+import profile from "./profile";
+import Avatars from "../DashboardScreen/Components/avatars";
 import { firebase } from "../../firebase/config";
 import React from "react";
+import { useState, useEffect } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { Text, StyleSheet, View } from "react-native";
 
 function DoLogout(props) {
   const user = firebase.auth().currentUser;
+  var uid;
+
+  if (user != null) {
+    uid = user.uid;
+  }
+
   const email = user.email;
-  var username;
-
-  var userId = firebase.auth().currentUser.uid;
-  const ref = firebase.database().ref("users/" + userId + "/credentials/");
-  ref.child("fullName").on("value", (snapshot) => {
-    username = snapshot.val();
-  });
-
-  const changeAvatar = () => {
-    console.log("Hello");
-  };
+  const name = user.displayName;
 
   const doLogout = () => {
     firebase
@@ -43,19 +42,39 @@ function DoLogout(props) {
       });
   };
 
+  const getAvatar = () => {
+    if ("Dog_1.png" == user.photoURL) return Avatars.dog1;
+    if ("Dog_2.png" == user.photoURL) return Avatars.dog2;
+    if ("Dog_3.png" == user.photoURL) return Avatars.dog3;
+    if ("Dog_4.png" == user.photoURL) return Avatars.dog4;
+    if ("Dog_5.png" == user.photoURL) return Avatars.dog5;
+    if ("Dog_6.png" == user.photoURL) return Avatars.dog6;
+    if ("Dog_7.png" == user.photoURL) return Avatars.dog7;
+    if ("Dog_8.png" == user.photoURL) return Avatars.dog8;
+    if ("Dog_9.png" == user.photoURL) return Avatars.dog9;
+    if ("Dog_10.png" == user.photoURL) return Avatars.dog10;
+    if ("Dog_11.png" == user.photoURL) return Avatars.dog11;
+    if ("Dog_12.png" == user.photoURL) return Avatars.dog12;
+    if ("Dog_13.png" == user.photoURL) return Avatars.dog13;
+    if ("Dog_14.png" == user.photoURL) return Avatars.dog14;
+    if ("Dog_15.png" == user.photoURL) return Avatars.dog15;
+    if ("Dog_16.png" == user.photoURL) return Avatars.dog16;
+  };
+
   return (
     <DrawerContentScrollView {...props}>
       <View style={styles.userInfoSection}>
         <View style={{ flexDirection: "row", marginTop: 15, marginBottom: 20 }}>
-          <Avatar.Image
-            source={require("../../assets/avatars/Dog_4.png")}
-            size={80}
-          />
+          <Avatar.Image source={getAvatar()} size={100} />
           <View
-            style={{ marginLeft: 15, flexDirection: "column", marginTop: 10 }}
+            style={{
+              marginLeft: 15,
+              flexDirection: "column",
+              marginTop: 10,
+            }}
           >
             <Title style={styles.title} numberOfLines={1}>
-              {username}
+              {name}
             </Title>
             <Text style={styles.caption} numberOfLines={1}>
               {email}
@@ -66,7 +85,7 @@ function DoLogout(props) {
 
         <DrawerItemList {...props} />
         <DrawerItem
-          marginTop={360}
+          marginTop={300}
           label="Logout"
           activeTintColor="#5061FF"
           inactiveTintColor="#5061FF"
@@ -89,6 +108,8 @@ function DoLogout(props) {
 const Drawer = createDrawerNavigator();
 
 function homeScreen({ navigation }) {
+  const user = firebase.auth().currentUser;
+  const userAvatar = user.photoURL;
   return (
     <Drawer.Navigator
       screenOptions={{
@@ -97,7 +118,7 @@ function homeScreen({ navigation }) {
           width: 280,
         },
       }}
-      drawerContent={(props) => <DoLogout {...props} />}
+      drawerContent={(props) => <DoLogout userAvatar={userAvatar} {...props} />}
       initialRouteName="Home"
     >
       <Drawer.Screen
@@ -118,7 +139,7 @@ function homeScreen({ navigation }) {
       />
       <Drawer.Screen
         name="Profile"
-        component={profileScreen}
+        component={profile}
         options={{
           headerShown: false,
           drawerActiveTintColor: "#5061FF",
@@ -134,7 +155,7 @@ function homeScreen({ navigation }) {
       />
       <Drawer.Screen
         name="Settings"
-        component={profileScreen}
+        component={profile}
         options={{
           headerShown: false,
           drawerActiveTintColor: "#5061FF",
@@ -142,6 +163,22 @@ function homeScreen({ navigation }) {
           drawerIcon: ({ focused, size }) => (
             <Ionicons
               name="settings-outline"
+              size={30}
+              color={focused ? "#5061FF" : "#5061FF"}
+            />
+          ),
+        }}
+      />
+      <Drawer.Screen
+        name="Support"
+        component={profile}
+        options={{
+          headerShown: false,
+          drawerActiveTintColor: "#5061FF",
+          drawerInactiveTintColor: "#5061FF",
+          drawerIcon: ({ focused, size }) => (
+            <Ionicons
+              name="information-circle-outline"
               size={30}
               color={focused ? "#5061FF" : "#5061FF"}
             />

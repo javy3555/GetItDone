@@ -9,7 +9,7 @@ import RegisterScreen from "./app/screens/LoginRegisterScreen/RegisterScreen";
 import homeScreen from "./app/screens/DashboardScreen/homeScreen";
 import landingScreen from "./app/screens/landingScreen";
 import settingsScreen from "./app/screens/DashboardScreen/settingsScreen";
-import profileScreen from "./app/screens/DashboardScreen/profileScreen";
+import profile from "./app/screens/DashboardScreen/profile";
 import useFonts from "./app/assets/hooks/useFonts";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigationContainer } from "@react-navigation/native";
@@ -71,8 +71,8 @@ export default function App() {
           }}
         />
         <Stack.Screen
-          name="profileScreen"
-          component={profileScreen}
+          name="profile"
+          component={profile}
           options={{
             headerShown: false,
           }}

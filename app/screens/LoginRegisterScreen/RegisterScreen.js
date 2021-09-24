@@ -17,16 +17,19 @@ import {
 } from "native-base";
 import { firebase } from "../../firebase/config";
 import theme from "../styles";
-import styles from "../../assets/styles/registerStyles"
+import styles from "../../assets/styles/registerStyles";
 
 function RegisterScreen({ navigation }) {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  var avatar;
 
   const doRegister = (e) => {
     e.preventDefault(); // to prevent webpage from realoading on submit each time login is pressed.
+
+    avatar = `Dog_${Math.floor(Math.random() * 16) + 1}.png`;
 
     // If passwords don't match
     if (password !== confirmPassword) {
@@ -46,10 +49,15 @@ function RegisterScreen({ navigation }) {
           fullName,
         };
 
+        firebase.auth().currentUser.updateProfile({
+          displayName: data.fullName,
+          photoURL: avatar,
+        });
+
         // Add data to user's db reference
         firebase
           .database()
-          .ref("users/" + uid + "/credentials")
+          .ref("users/" + uid + "/credentials/")
           .set(data)
           .then(() => {})
           .catch((error) => {

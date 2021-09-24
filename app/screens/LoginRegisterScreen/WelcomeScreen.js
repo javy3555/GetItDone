@@ -5,6 +5,7 @@ import {
   View,
   Platform,
   KeyboardAvoidingView,
+  Alert,
 } from "react-native";
 import {
   Icon,
@@ -41,7 +42,7 @@ function WelcomeScreen({ navigation }) {
       .catch((error) => {
         var errorCode = error.code;
         var errorMessage = error.message;
-        this.toast.show(errorMessage, 600);
+        Alert.alert(errorMessage);
       });
   };
 
@@ -107,16 +108,25 @@ function WelcomeScreen({ navigation }) {
                     />
                   }
                   InputRightElement={
-                    <Button
-                      size="sm"
-                      bg="#5061FF"
-                      mr={2}
-                      roundedLeft="md"
-                      roundedRight="md"
-                      onPress={handleClick}
-                    >
-                      {show ? "Hide" : "Show"}
-                    </Button>
+                    show ? (
+                      <Icon
+                        as={<MaterialIcons name="visibility" />}
+                        size={7}
+                        m={2}
+                        mr={3}
+                        color="muted.400"
+                        onPress={handleClick}
+                      />
+                    ) : (
+                      <Icon
+                        as={<MaterialIcons name="visibility-off" />}
+                        size={7}
+                        m={2}
+                        mr={3}
+                        color="muted.400"
+                        onPress={handleClick}
+                      />
+                    )
                   }
                   borderColor="primary.300"
                   onChangeText={(text) => setPassword(text)}
@@ -138,7 +148,7 @@ function WelcomeScreen({ navigation }) {
                 Forgot password?
               </Text>
               <Button style={styles.loginButton} onPress={doLogin}>
-                Log in
+                <Text style={{fontSize: 18, color : "white", fontWeight: "bold"}}>Log in</Text>
               </Button>
               <View>
                 <Text
