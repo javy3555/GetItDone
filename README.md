@@ -13,7 +13,7 @@ GetItDone is a To-do and productivity app built with ReactJs for iOS and Android
 - Sync tasks across all devices (iOS/Android)
 - Capture and organize task the moment they pop into your head.
 - Remember deadlines with reminders and due dates.
-- Classify task by prioriy
+- Classify task by priority
 - Flexible calendar views
 
 ## Preview
