@@ -18,3 +18,9 @@ GetItDone is a To-do and productivity app built with ReactJs for iOS and Android
 
 ## Preview
 
+![Alt text](/app/assets/images/Preview1.PNG?raw=true "Optional Title")
+![Alt text](/app/assets/images/Preview2.PNG?raw=true "Optional Title")
+![Alt text](/app/assets/images/Preview3.PNG?raw=true "Optional Title")
+![Alt text](/app/assets/images/Preview4.PNG?raw=true "Optional Title")
+![Alt text](/app/assets/images/Preview5.PNG?raw=true "Optional Title")
+![Alt text](/app/assets/images/Preview6.PNG?raw=true "Optional Title")
